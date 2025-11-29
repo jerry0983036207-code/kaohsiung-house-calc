@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung哥的高雄買房戰情室</title>
+    <!-- 引入 React 和 Tailwind -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- 設定區 ---
+        const USER_PHOTO_URL = "https://i.postimg.cc/zXqgmkHy/S-64086023.jpg"; 
+        const LINE_ADD_FRIEND_URL = "https://line.me/ti/p/msIk4x7U95";
+
+        // --- 圖標組件 (SVG) ---
+        const Icons = {
+            MapPin: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            TrendingUp: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+            AlertCircle: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>,
+            Home: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+            ShieldCheck: ({className, size}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>,
+            Flame: ({className, size}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
+            Calendar: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>,
+            DollarSign: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+            Percent: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>,
+            BarChart3: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
+            User: ({size, className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+            Share2: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>,
+            MessageCircle: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        };
+
+        // --- 資料庫 ---
+        const MARKET_DATA_ALL_TIME_ANALYSIS = [
+            { district: '鼓山區', area: '美術館特區', type: '中古大樓(10-15年)', priceRange: [1300, 2400], trend: '🛡️保值', note: '房價領頭羊，抗跌性最強' },
+            { district: '鼓山區', area: '美術館特區', type: '新成屋/預售', priceRange: [1800, 4500], trend: '🔥飆漲', note: '新案站穩5-6字頭，豪宅聚落' },
+            { district: '左營區', area: '高鐵特區', type: '中古大樓(15年)', priceRange: [1100, 1900], trend: '📈穩健', note: '三鐵共構優勢，剛需極強' },
+            { district: '左營區', area: '果貿社區', type: '圓環大樓', priceRange: [550, 950], trend: '💰補漲', note: '低總價好入手，新台17線利多' },
+            { district: '楠梓區', area: '高大特區', type: '新成屋/新古', priceRange: [1000, 1600], trend: '🔥飆漲', note: '台積電核心受惠區，量增價揚' },
+            { district: '橋頭區', area: '新市鎮', type: '新成屋/預售', priceRange: [1100, 1700], trend: '🔥飆漲', note: '科學園區加持，從1字頭漲至3字頭' },
+            { district: '仁武區', area: '八卦寮/澄德', type: '透天/大樓', priceRange: [1200, 1900], trend: '📈穩健', note: '人口移入全高雄第一，機能成熟' },
+            { district: '岡山區', area: '火車站周邊', type: '透天/大樓', priceRange: [900, 1500], trend: '📈穩健', note: '捷運延伸線利多，商場進駐' },
+            { district: '前鎮區', area: '亞洲新灣區', type: '新成屋/小宅', priceRange: [1000, 1800], trend: '🔥飆漲', note: 'AI輝達進駐，5年新屋均價45萬' },
+            { district: '前鎮區', area: '瑞隆/五甲', type: '中古大樓', priceRange: [750, 1250], trend: '🛡️保值', note: '生活機能極佳，人口密集' },
+            { district: '苓雅區', area: '文化中心', type: '中古大樓', priceRange: [900, 1600], trend: '🛡️保值', note: '公教區素質高，釋出稀有' },
+            { district: '苓雅區', area: '三多/85大樓', type: '套房/兩房', priceRange: [450, 850], trend: '💰低基期', note: '市中心低總價，收租自用皆宜' },
+            { district: '前金區', area: '愛河周邊', type: '中古大樓', priceRange: [850, 1550], trend: '📈穩健', note: '景觀宅為主，近期補漲明顯' },
+            { district: '新興區', area: '六合/美麗島', type: '華廈/大樓', priceRange: [700, 1300], trend: '💰補漲', note: '位於市中心，生活機能便利' },
+            { district: '鹽埕區', area: '駁二特區', type: '中古大樓', priceRange: [650, 1100], trend: '📈穩健', note: '觀光加持，老屋翻新熱潮' },
+            { district: '小港區', area: '漢民商圈', type: '華廈/大樓', priceRange: [500, 950], trend: '💰低基期', note: '房價親民，適合首購族' },
+            { district: '鳳山區', area: '文山特區', type: '中古大樓', priceRange: [1200, 2000], trend: '🛡️保值', note: '鳳山富人區，抗跌性極強' },
+            { district: '鳳山區', area: '鳳山國中/大寮', type: '華廈/新大樓', priceRange: [800, 1300], trend: '📈穩健', note: '捷運橘線末端，房價相對親民' },
+            { district: '三民區', area: '河堤社區', type: '中古大樓', priceRange: [900, 1600], trend: '🛡️保值', note: '有小天母之稱，環境優質' },
+            { district: '三民區', area: '建工/高科大', type: '中古大樓', priceRange: [750, 1350], trend: '📈穩健', note: '輕軌通車效益，學生租屋市場大' },
+            { district: '大寮區', area: '大發/市區', type: '透天/華廈', priceRange: [600, 1100], trend: '💰低基期', note: '工業區就業人口支撐' },
+            { district: '林園區', area: '沿海路周邊', type: '透天/華廈', priceRange: [450, 850], trend: '💰低基期', note: '捷運小港林園線定案利多' },
+        ];
+
+        // --- 主程式 App ---
+        const App = () => {
+            const [monthlySalary, setMonthlySalary] = useState(60000);
+            const [interestRate, setInterestRate] = useState(2.2);
+            const [loanTermYears, setLoanTermYears] = useState(30);
+            const [downPaymentRatio, setDownPaymentRatio] = useState(20);
+            const [results, setResults] = useState({
+                safe: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
+                risk: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
+            });
+            const [safeHotspots, setSafeHotspots] = useState([]);
+            const [riskHotspots, setRiskHotspots] = useState([]);
+
+            useEffect(() => {
+                const calc = calculateAffordability();
+                if (calc) updateHotspots(calc.safe.totalHousePrice, calc.risk.totalHousePrice);
+            }, [monthlySalary, interestRate, loanTermYears, downPaymentRatio]);
+
+            const calculateAffordability = () => {
+                const safeMonthlyPayment = monthlySalary / 3;
+                const riskMonthlyPayment = monthlySalary * 0.6;
+                const monthlyRate = interestRate / 100 / 12;
+                const totalMonths = loanTermYears * 12;
+                const amortizationFactor = (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+                
+                const safeLoanAmount = Math.floor(safeMonthlyPayment / amortizationFactor);
+                const riskLoanAmount = Math.floor(riskMonthlyPayment / amortizationFactor);
+                const loanRatio = (100 - downPaymentRatio) / 100;
+                
+                const safeHousePrice = Math.floor(safeLoanAmount / loanRatio);
+                const riskHousePrice = Math.floor(riskLoanAmount / loanRatio);
+
+                const newResults = {
+                    safe: { monthlyPayment: Math.round(safeMonthlyPayment), loanAmount: Math.round(safeLoanAmount / 10000), totalHousePrice: Math.round(safeHousePrice / 10000) },
+                    risk: { monthlyPayment: Math.round(riskMonthlyPayment), loanAmount: Math.round(riskLoanAmount / 10000), totalHousePrice: Math.round(riskHousePrice / 10000) }
+                };
+                setResults(newResults);
+                return newResults;
+            };
+
+            const updateHotspots = (safeBudget, riskBudget) => {
+                const filter = (budget) => {
+                    const min = budget * 0.85;
+                    const max = budget * 1.15;
+                    return MARKET_DATA_ALL_TIME_ANALYSIS.filter(item => {
+                        const [iMin, iMax] = item.priceRange;
+                        return (min <= iMax && max >= iMin);
+                    });
+                };
+                setSafeHotspots(filter(safeBudget));
+                setRiskHotspots(filter(riskBudget));
+            };
+
+            const formatNumber = (num) => new Intl.NumberFormat('zh-TW').format(num);
+
+            const handleShare = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Lung哥的高雄買房戰情室',
+                        text: `我月薪${monthlySalary}，算出安全買房預算是${results.safe.totalHousePrice}萬！快來看看你在高雄能買哪？`,
+                        url: window.location.href,
+                    });
+                } else {
+                    alert("連結已複製！快傳給朋友看看");
+                }
+            };
+
+            const AreaCard = ({ spot, theme }) => {
+                const isRisk = theme === 'risk';
+                return (
+                    <div className={`bg-white border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer group ${isRisk ? 'border-rose-100' : 'border-emerald-100'}`}>
+                        <div className="flex justify-between items-start mb-2">
+                            <span className={`font-bold text-slate-800 text-lg ${isRisk ? 'group-hover:text-rose-600' : 'group-hover:text-emerald-600'} transition-colors`}>{spot.district}</span>
+                            <span className="text-xs font-medium bg-slate-100 text-slate-500 px-2 py-1 rounded">{spot.area}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded border ${isRisk ? 'bg-rose-50 border-rose-200 text-rose-700' : 'bg-emerald-50 border-emerald-200 text-emerald-700'}`}>{spot.trend}</span>
+                            <div className="flex items-center gap-1 text-sm text-slate-600"><Icons.Home size={14} /><span>{spot.type}</span></div>
+                        </div>
+                        <div className="flex justify-between items-end">
+                            <div className={`${isRisk ? 'text-rose-600' : 'text-emerald-600'} font-bold`}>{spot.priceRange[0]}-{spot.priceRange[1]} 萬</div>
+                            <div className="text-xs text-slate-400 flex items-center gap-1"><Icons.BarChart3 size={12}/>實價大數據</div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-slate-50 text-xs text-slate-500 flex gap-1 items-start">
+                            <Icons.TrendingUp className={`mt-0.5 shrink-0 ${isRisk ? 'text-rose-400' : 'text-emerald-400'}`} />
+                            {spot.note}
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto p-4 md:p-6 bg-slate-50 min-h-screen">
+                    {/* Header */}
+                    <div className="text-center mb-8 relative">
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">🏠 Lung哥的高雄買房戰情室</h2>
+                        <p className="text-slate-500">輸入月薪，算出你的「舒適圈」與「戰場」</p>
+                        <button onClick={handleShare} className="absolute right-0 top-0 hidden md:flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full transition-colors">
+                            <Icons.Share2 size={14} /><span>分享</span>
+                        </button>
+                    </div>
+
+                    {/* Inputs */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm mb-8 border border-slate-100">
+                        <div className="mb-6">
+                            <label className="block text-sm font-bold text-slate-600 mb-2">您的月收入 (TWD)</label>
+                            <div className="flex items-center bg-slate-50 rounded-lg px-4 py-2 border border-slate-200 focus-within:ring-2 focus-within:ring-blue-400">
+                                <span className="text-xl font-bold text-slate-400 mr-2">$</span>
+                                <input type="number" value={monthlySalary} onChange={(e) => setMonthlySalary(Number(e.target.value))} className="block w-full text-2xl font-bold text-slate-800 bg-transparent focus:outline-none"/>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 mb-1"><Icons.Percent className="text-slate-400" /><label className="text-xs font-bold text-slate-500">利率 (%)</label></div>
+                                <input type="number" step="0.01" value={interestRate} onChange={(e) => setInterestRate(Number(e.target.value))} className="w-full p-2 border border-slate-200 rounded-lg text-slate-700 focus:outline-blue-400"/>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 mb-1"><Icons.Calendar className="text-slate-400" /><label className="text-xs font-bold text-slate-500">貸款年限 (年)</label></div>
+                                <input type="number" value={loanTermYears} onChange={(e) => setLoanTermYears(Number(e.target.value))} className="w-full p-2 border border-slate-200 rounded-lg text-slate-700 focus:outline-blue-400"/>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 mb-1"><Icons.DollarSign className="text-slate-400" /><label className="text-xs font-bold text-slate-500">自備款 (%)</label></div>
+                                <input type="number" value={downPaymentRatio} onChange={(e) => setDownPaymentRatio(Number(e.target.value))} className="w-full p-2 border border-slate-200 rounded-lg text-slate-700 focus:outline-blue-400"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Results */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        {/* Safe */}
+                        <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-2xl flex flex-col justify-between">
+                            <div>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div><h3 className="text-lg font-bold text-emerald-800 flex items-center gap-2"><Icons.ShieldCheck size={20} className="text-emerald-600"/>333 安全法則</h3><p className="text-xs text-emerald-600 mt-1">生活品質優，不怕升息</p></div>
+                                    <span className="bg-emerald-200 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">推薦</span>
+                                </div>
+                                <div className="text-center py-2"><p className="text-sm text-emerald-600 mb-1">建議總價天花板</p><p className="text-3xl font-black text-emerald-700">{formatNumber(results.safe.totalHousePrice)} <span className="text-lg">萬</span></p></div>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-emerald-200/60">
+                                <div className="flex justify-between items-center text-sm font-bold text-emerald-800 bg-emerald-100/50 p-2 rounded-lg mb-2"><span>銀行可貸</span><span>{formatNumber(results.safe.loanAmount)} 萬</span></div>
+                                <div className="flex justify-center"><p className="text-xs text-emerald-600 bg-emerald-100/30 inline-block px-3 py-1 rounded-full">月付約 {formatNumber(results.safe.monthlyPayment)} 元</p></div>
+                            </div>
+                        </div>
+                        {/* Risk */}
+                        <div className="bg-rose-50 border border-rose-100 p-5 rounded-2xl opacity-90 flex flex-col justify-between">
+                            <div>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div><h3 className="text-lg font-bold text-rose-800 flex items-center gap-2"><Icons.Flame size={20} className="text-rose-600"/>60% 極限負擔</h3><p className="text-xs text-rose-600 mt-1">生活極度緊繃，風險高</p></div>
+                                    <span className="bg-rose-200 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">警示</span>
+                                </div>
+                                <div className="text-center py-2"><p className="text-sm text-rose-600 mb-1">理論可貸極限</p><p className="text-3xl font-black text-rose-700">{formatNumber(results.risk.totalHousePrice)} <span className="text-lg">萬</span></p></div>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-rose-200/60">
+                                <div className="flex justify-between items-center text-sm font-bold text-rose-800 bg-rose-100/50 p-2 rounded-lg mb-2"><span>銀行可貸</span><span>{formatNumber(results.risk.loanAmount)} 萬</span></div>
+                                <div className="flex justify-center"><p className="text-xs text-rose-600 bg-rose-100/30 inline-block px-3 py-1 rounded-full">月付約 {formatNumber(results.risk.monthlyPayment)} 元</p></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div className="border-t border-slate-200 pt-8">
+                        <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><Icons.MapPin className="text-emerald-600" /><span>【舒適圈】依據 <span className="text-emerald-600">安全總價 {results.safe.totalHousePrice}萬</span> 推薦：</span></h3>
+                        {safeHotspots.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {safeHotspots.map((spot, index) => <AreaCard key={`safe-${index}`} spot={spot} theme="safe" />)}
+                            </div>
+                        ) : (
+                            <div className="bg-slate-50 rounded-xl p-8 text-center text-slate-500 text-sm"><p>此預算區間 ({results.safe.totalHousePrice}萬) 目前資料庫中較少匹配物件，建議調整自備款或參考外圍區域。</p></div>
+                        )}
+                    </div>
+
+                    <div className="border-t border-slate-200 pt-8 mt-8">
+                        <h3 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2"><Icons.AlertCircle className="text-rose-600" /><span>【壓力鍋】若硬拚 <span className="text-rose-600">極限總價 {results.risk.totalHousePrice}萬</span>，雖然可選變多：</span></h3>
+                        <p className="text-xs text-rose-600 mb-4 ml-8 bg-rose-50 inline-block px-2 py-1 rounded">⚠️ 警告：此區間每月還款佔薪資6成，若遇升息或失業風險極大。</p>
+                        {riskHotspots.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {riskHotspots.map((spot, index) => <AreaCard key={`risk-${index}`} spot={spot} theme="risk" />)}
+                            </div>
+                        ) : (
+                            <div className="bg-rose-50 rounded-xl p-8 text-center text-rose-400 text-sm border border-rose-100"><p>即便拉高到極限預算 ({results.risk.totalHousePrice}萬)，目前資料庫中仍較少匹配物件。</p></div>
+                        )}
+                    </div>
+
+                    {/* Footer CTA */}
+                    <div className="mt-12 bg-slate-800 rounded-xl p-6 text-white text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent_70%)] pointer-events-none"></div>
+                        <div className="flex flex-col items-center gap-3 relative z-10">
+                            {/* 頭貼 */}
+                            <div className="p-1 bg-gradient-to-br from-blue-400 to-emerald-400 rounded-full shadow-lg">
+                                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-800 relative">
+                                    <img src={USER_PHOTO_URL} alt="Lung哥" className="w-full h-full object-cover absolute top-0 left-0" style={{ objectPosition: 'center 15%' }} />
+                                </div>
+                            </div>
+                            <h3 className="text-lg font-bold mt-2">需要更精準的落點分析？</h3>
+                            <p className="text-slate-300 text-sm max-w-md">這只是初步試算。如果你想知道如何談到更好的價格，或者避開那些數據沒告訴你的「地雷區」。</p>
+                            <button onClick={() => window.open(LINE_ADD_FRIEND_URL, '_blank')} className="mt-4 bg-[#00B900] hover:bg-[#009900] text-white font-bold py-3 px-8 rounded-full flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-green-500/30">
+                                <Icons.MessageCircle size={18} /><span>加 Lung哥 Line 預約健檢</span>
+                            </button>
+                            <p className="text-xs text-slate-500 mt-4">© Lung哥的高雄買房戰情室 | Design by Lung哥</p>
+                        </div>
+                    </div>
+
+                    <div className="text-center mt-4 text-xs text-slate-400 pb-8">
+                        <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
