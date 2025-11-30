@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lung哥的高雄買房戰情室 | V5.2 漂浮諮詢版</title>
+    <title>Lung哥的高雄買房戰情室 | V5.3 全面同步版</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -395,14 +395,13 @@
                         <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
                     </div>
 
-                    {/* Floating Button */}
+                    {/* Floating Button (全平台顯示) */}
                     <button 
                         onClick={() => window.open(LINE_ADD_FRIEND_URL, '_blank')}
-                        className="fixed bottom-6 right-6 bg-[#06c755] text-white p-3 md:px-5 md:py-3 rounded-full shadow-xl z-50 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all animate-pulse-shadow"
+                        className="fixed bottom-6 right-6 bg-[#06c755] text-white px-5 py-3 rounded-full shadow-xl z-50 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all animate-pulse-shadow"
                     >
                         <Icons.MessageCircle size={24} />
-                        <span className="font-bold text-sm hidden md:inline">預約諮詢</span>
-                        <span className="font-bold text-sm md:hidden">LINE</span>
+                        <span className="font-bold text-sm">LINE 預約諮詢</span>
                     </button>
 
                     {/* Report Modal */}
