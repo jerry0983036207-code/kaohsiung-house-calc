@@ -20,9 +20,24 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- 設定區 ---
+        // ==========================================
+        // 👇 請在此處設定您的個人資訊 (設定區) 👇
+        // ==========================================
+
         const USER_PHOTO_URL = "https://i.postimg.cc/zXqgmkHy/S-64086023.jpg"; 
         const LINE_ADD_FRIEND_URL = "https://line.me/ti/p/msIk4x7U95";
+        
+        // 新增：社群連結設定
+        const SOCIAL_LINKS = {
+            tiktok: "https://reurl.cc/Yk0E0l",
+            fb: "https://reurl.cc/0aZvvK",
+            ig: "https://reurl.cc/KO3q5p",
+            fanpage: "https://reurl.cc/MMy9gW"
+        };
+
+        // ==========================================
+        // 👆 設定結束，下方為核心程式碼 👆
+        // ==========================================
 
         // --- 圖標組件 (SVG) ---
         const Icons = {
@@ -38,7 +53,12 @@
             BarChart3: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
             User: ({size, className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
             Share2: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>,
-            MessageCircle: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+            MessageCircle: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
+            // 新增社群圖標
+            Instagram: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>,
+            Facebook: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
+            Video: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>, // 代替 TikTok
+            Users: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         };
 
         // --- 資料庫 ---
@@ -250,7 +270,7 @@
                         )}
                     </div>
 
-                    {/* Footer CTA */}
+                    {/* Footer CTA & Social Links */}
                     <div className="mt-12 bg-slate-800 rounded-xl p-6 text-white text-center relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent_70%)] pointer-events-none"></div>
                         <div className="flex flex-col items-center gap-3 relative z-10">
@@ -260,12 +280,31 @@
                                     <img src={USER_PHOTO_URL} alt="Lung哥" className="w-full h-full object-cover absolute top-0 left-0" style={{ objectPosition: 'center 15%' }} />
                                 </div>
                             </div>
+                            
                             <h3 className="text-lg font-bold mt-2">需要更精準的落點分析？</h3>
                             <p className="text-slate-300 text-sm max-w-md">這只是初步試算。如果你想知道如何談到更好的價格，或者避開那些數據沒告訴你的「地雷區」。</p>
+                            
                             <button onClick={() => window.open(LINE_ADD_FRIEND_URL, '_blank')} className="mt-4 bg-[#00B900] hover:bg-[#009900] text-white font-bold py-3 px-8 rounded-full flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-green-500/30">
                                 <Icons.MessageCircle size={18} /><span>加 Lung哥 Line 預約健檢</span>
                             </button>
-                            <p className="text-xs text-slate-500 mt-4">© Lung哥的高雄買房戰情室 | Design by Lung哥</p>
+
+                            {/* Social Media Links (新增區域) */}
+                            <div className="flex flex-wrap justify-center gap-3 mt-6 border-t border-slate-700 pt-6 w-full">
+                                <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black hover:bg-gray-900 transition-colors text-xs font-bold border border-gray-700">
+                                    <Icons.Video size={14} /> TikTok
+                                </a>
+                                <a href={SOCIAL_LINKS.fb} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1877F2] hover:bg-[#166fe5] transition-colors text-xs font-bold">
+                                    <Icons.Facebook size={14} /> FB
+                                </a>
+                                <a href={SOCIAL_LINKS.ig} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] hover:opacity-90 transition-opacity text-xs font-bold">
+                                    <Icons.Instagram size={14} /> IG
+                                </a>
+                                <a href={SOCIAL_LINKS.fanpage} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-600 hover:bg-slate-500 transition-colors text-xs font-bold">
+                                    <Icons.Users size={14} /> 粉絲團
+                                </a>
+                            </div>
+
+                            <p className="text-xs text-slate-500 mt-6">© Lung哥的高雄買房戰情室 | Design by Lung哥</p>
                         </div>
                     </div>
 
