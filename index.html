@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lung哥的高雄買房戰情室 | V5.0 實戰版</title>
+    <title>Lung哥的高雄買房戰情室 | V5.2 漂浮諮詢版</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -19,6 +19,15 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 漂浮按鈕呼吸燈效果 */
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(6, 199, 85, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(6, 199, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 199, 85, 0); }
+        }
+        .animate-pulse-shadow {
+            animation: pulse-shadow 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +58,7 @@
             Flame: ({className, size}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
             MessageCircle: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
             Share2: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>,
+            Download: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
             CheckCircle: ({size, className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
             X: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 12"/></svg>,
             Video: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
@@ -96,7 +106,7 @@
             const [loanTermYears, setLoanTermYears] = useState(30);
             const [downPaymentRatio, setDownPaymentRatio] = useState(20);
             const [gracePeriod, setGracePeriod] = useState(0);
-            const [propertySize, setPropertySize] = useState(30); // 預設 30 坪
+            const [propertySize, setPropertySize] = useState(30); 
             
             const [isNewYouth, setIsNewYouth] = useState(false);
             const [showReport, setShowReport] = useState(false); 
@@ -381,9 +391,19 @@
                     </div>
 
                     {/* Disclaimer (全平台顯示) */}
-                    <div className="text-center mt-4 text-xs text-slate-400 pb-8 px-4">
+                    <div className="text-center mt-4 text-xs text-slate-400 pb-20 px-4">
                         <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
                     </div>
+
+                    {/* Floating Button */}
+                    <button 
+                        onClick={() => window.open(LINE_ADD_FRIEND_URL, '_blank')}
+                        className="fixed bottom-6 right-6 bg-[#06c755] text-white p-3 md:px-5 md:py-3 rounded-full shadow-xl z-50 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all animate-pulse-shadow"
+                    >
+                        <Icons.MessageCircle size={24} />
+                        <span className="font-bold text-sm hidden md:inline">預約諮詢</span>
+                        <span className="font-bold text-sm md:hidden">LINE</span>
+                    </button>
 
                     {/* Report Modal */}
                     {showReport && (
@@ -405,28 +425,46 @@
                                                 <p className="text-xl font-bold">${formatNumber(monthlySalary)}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-slate-400">安全總價</p>
+                                                <p className="text-xs text-slate-400">安全總價 (舒適)</p>
                                                 <p className="text-xl font-bold text-emerald-400">${formatNumber(results.safe.totalHousePrice)}萬</p>
                                             </div>
                                         </div>
-                                        <div className="flex justify-between items-end mb-4">
-                                            <div>
-                                                <p className="text-xs text-slate-400">建議單價</p>
-                                                <p className="text-lg font-bold text-emerald-300">{results.safe.unitPrice} <span className="text-xs text-white">萬/坪</span></p>
+                                        <div className="grid grid-cols-2 gap-4 mb-4 text-left border-t border-white/10 pt-4">
+                                             <div>
+                                                <p className="text-xs text-slate-400">極限總價 (壓力)</p>
+                                                <p className="text-xl font-bold text-rose-400">${formatNumber(results.risk.totalHousePrice)}萬</p>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-xs text-slate-400">試算坪數</p>
-                                                <p className="text-sm font-bold">{propertySize} 坪</p>
+                                            <div>
+                                                 <p className="text-xs text-slate-400">目標單價 (安全/極限)</p>
+                                                 <p className="text-sm font-bold">
+                                                    <span className="text-emerald-400">{results.safe.unitPrice}</span>
+                                                    <span className="text-white mx-1">/</span>
+                                                    <span className="text-rose-400">{results.risk.unitPrice}</span>
+                                                    <span className="text-xs ml-1">萬</span>
+                                                 </p>
                                             </div>
                                         </div>
                                         <div className="h-px bg-white/10 mb-4"></div>
                                         <div className="text-left">
-                                            <p className="text-xs text-slate-400 mb-2">系統推薦熱區</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').slice(0, 3).map((s, i) => (
+                                            <p className="text-xs text-slate-400 mb-2">系統推薦 (舒適圈)</p>
+                                            <div className="flex flex-wrap gap-2 mb-3">
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS
+                                                    .filter(s => getAreaStatus(s.priceRange) === 'safe')
+                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
+                                                    .slice(0, 3).map((s, i) => (
                                                     <span key={i} className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded">{s.area}</span>
                                                 ))}
                                                 {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').length === 0 && <span className="text-xs text-slate-500">暫無匹配區域</span>}
+                                            </div>
+                                            <p className="text-xs text-slate-400 mb-2">潛力觀察 (壓力區)</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS
+                                                    .filter(s => getAreaStatus(s.priceRange) === 'risk')
+                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
+                                                    .slice(0, 3).map((s, i) => (
+                                                    <span key={i} className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded">{s.area}</span>
+                                                ))}
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'risk').length === 0 && <span className="text-xs text-slate-500">暫無</span>}
                                             </div>
                                         </div>
                                     </div>
