@@ -15,7 +15,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; -webkit-font-smoothing: antialiased; }
         .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .gradient-text { background-clip: text; -webkit-background-clip: text; color: transparent; background-image: linear-gradient(to right, #0ea5e9, #10b981); }
         /* 隱藏滾動條但保留功能 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -93,7 +92,7 @@
             const [downPaymentRatio, setDownPaymentRatio] = useState(20);
             const [gracePeriod, setGracePeriod] = useState(0);
             const [isNewYouth, setIsNewYouth] = useState(false);
-            const [showReport, setShowReport] = useState(false); // 報告卡Modal開關
+            const [showReport, setShowReport] = useState(false); 
 
             const [results, setResults] = useState({
                 safe: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
@@ -101,7 +100,6 @@
                 gracePayment: 0,
             });
 
-            // 新青安一鍵設定
             const toggleNewYouth = () => {
                 if (!isNewYouth) {
                     setInterestRate(1.775);
@@ -126,7 +124,6 @@
                 const monthlyRate = interestRate / 100 / 12;
                 const totalMonths = loanTermYears * 12;
                 
-                // 本息平均攤還公式
                 const amortizationFactor = (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
                 
                 const safeLoanAmount = Math.floor(safeMonthlyPayment / amortizationFactor);
@@ -136,7 +133,6 @@
                 const safeHousePrice = Math.floor(safeLoanAmount / loanRatio);
                 const riskHousePrice = Math.floor(riskLoanAmount / loanRatio);
 
-                // 寬限期月付 (只繳息)
                 const interestOnlyPayment = Math.round((safeLoanAmount * (interestRate/100)) / 12);
 
                 setResults({
@@ -148,15 +144,26 @@
 
             const formatNumber = (num) => new Intl.NumberFormat('zh-TW').format(num);
 
-            // 判斷區域狀態 (綠/黃/灰)
             const getAreaStatus = (priceRange) => {
                 const [min, max] = priceRange;
                 const safeBudget = results.safe.totalHousePrice;
                 const riskBudget = results.risk.totalHousePrice;
 
-                if (safeBudget >= min) return 'safe'; // 買得起
-                if (riskBudget >= min) return 'risk'; // 勉強
-                return 'out'; // 買不起
+                if (safeBudget >= min) return 'safe'; 
+                if (riskBudget >= min) return 'risk'; 
+                return 'out'; 
+            };
+
+            const handleShare = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Lung哥的高雄買房戰情室',
+                        text: `我月薪${monthlySalary}，算出安全買房預算是${results.safe.totalHousePrice}萬！快來看看你在高雄能買哪？`,
+                        url: window.location.href,
+                    });
+                } else {
+                    alert("連結已複製！快傳給朋友看看");
+                }
             };
 
             return (
@@ -169,10 +176,16 @@
                                 <span className="bg-blue-600 text-white p-1 rounded-lg"><Icons.Home size={18} /></span>
                                 Lung哥的高雄買房戰情室
                             </h2>
-                            <button onClick={() => setShowReport(true)} className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1 font-bold shadow-lg hover:scale-105 transition-transform">
-                                <Icons.TrendingUp className="text-yellow-400" />
-                                生成報告
-                            </button>
+                            {/* 手機版分享按鈕：移除 hidden */}
+                            <div className="flex gap-2">
+                                <button onClick={handleShare} className="bg-slate-100 text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors">
+                                    <Icons.Share2 size={20} />
+                                </button>
+                                <button onClick={() => setShowReport(true)} className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1 font-bold shadow-lg hover:scale-105 transition-transform whitespace-nowrap">
+                                    <Icons.TrendingUp className="text-yellow-400" />
+                                    生成報告
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -188,7 +201,6 @@
                                 </div>
                             </div>
 
-                            {/* 新青安開關 */}
                             <div className="flex items-center justify-between bg-blue-50 p-3 rounded-xl mb-6 cursor-pointer border border-blue-100" onClick={toggleNewYouth}>
                                 <div className="flex items-center gap-2">
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isNewYouth ? 'bg-blue-600 border-blue-600' : 'border-slate-400'}`}>
@@ -209,7 +221,6 @@
 
                         {/* 2. 結果儀表板 */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* 安全區 */}
                             <div className="bg-emerald-500 text-white p-6 rounded-3xl relative overflow-hidden shadow-lg shadow-emerald-200">
                                 <div className="absolute -right-4 -top-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
                                 <div className="flex justify-between items-start mb-4 relative z-10">
@@ -225,7 +236,6 @@
                                 </div>
                             </div>
 
-                            {/* 極限區 */}
                             <div className="bg-white border-2 border-rose-100 p-6 rounded-3xl relative overflow-hidden">
                                 <div className="flex justify-between items-start mb-4">
                                     <div><h3 className="text-lg font-bold text-rose-600 flex items-center gap-1"><Icons.Flame size={18}/> 壓力鍋 (極限)</h3></div>
@@ -240,7 +250,7 @@
                             </div>
                         </div>
 
-                        {/* 3. 視覺化地圖 (Heavyweight Feature) */}
+                        {/* 3. 視覺化地圖 */}
                         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                                 <Icons.MapPin className="text-blue-500" /> 高雄房市戰略地圖
@@ -256,7 +266,7 @@
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {MARKET_DATA_ALL_TIME_ANALYSIS.map((spot, idx) => {
                                     const status = getAreaStatus(spot.priceRange);
-                                    let bgClass = "bg-slate-100 text-slate-400 border-transparent opacity-60"; // out
+                                    let bgClass = "bg-slate-100 text-slate-400 border-transparent opacity-60"; 
                                     if (status === 'safe') bgClass = "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 hover:shadow-md cursor-pointer";
                                     if (status === 'risk') bgClass = "bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hover:shadow-md cursor-pointer";
 
@@ -299,14 +309,17 @@
                         </div>
                     </div>
 
-                    {/* Report Modal (截圖專用卡片) */}
+                    {/* Disclaimer - 這裡就是您要的資料來源與免責聲明 */}
+                    <div className="text-center mt-4 text-xs text-slate-400 pb-8 px-4">
+                        <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
+                    </div>
+
+                    {/* Report Modal */}
                     {showReport && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowReport(false)}>
                             <div className="bg-slate-900 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl relative" onClick={e => e.stopPropagation()}>
-                                {/* Close Button */}
                                 <button onClick={() => setShowReport(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white z-20"><Icons.X size={24}/></button>
                                 
-                                {/* Card Content */}
                                 <div className="p-8 text-center text-white bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
                                     <div className="flex flex-col items-center mb-6">
                                         <div className="w-16 h-16 rounded-full border-2 border-emerald-400 p-0.5 mb-3">
@@ -341,7 +354,6 @@
 
                                     <div className="flex items-center justify-center gap-4">
                                         <div className="bg-white p-1 rounded-lg">
-                                            {/* QR Code Placeholder - 您可以換成真的 QR Code 圖片 */}
                                             <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${LINE_ADD_FRIEND_URL}`} className="w-16 h-16" />
                                         </div>
                                         <div className="text-left">
@@ -351,7 +363,7 @@
                                         </div>
                                     </div>
                                     
-                                    <p className="text-[10px] text-slate-600 mt-6">截圖保存此分析卡，與家人討論</p>
+                                    <p className="text-[10px] text-slate-600 mt-6">資料來源：內政部實價登錄 | 房貸試算僅供參考，實際核貸依銀行為準</p>
                                 </div>
                             </div>
                         </div>
