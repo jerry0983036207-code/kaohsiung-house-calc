@@ -18,6 +18,9 @@
         /* 隱藏滾動條但保留功能 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 動畫 */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -55,33 +58,50 @@
             Video: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
             Facebook: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
             Instagram: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>,
-            Users: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Users: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            Building: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>,
+            Store: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>
         };
 
-        // --- 資料庫 (維持不變) ---
+        // --- 資料庫 (擴充：加入 category 欄位) ---
         const MARKET_DATA_ALL_TIME_ANALYSIS = [
-            { district: '鼓山區', area: '美術館特區', type: '中古大樓', priceRange: [1300, 2400], trend: '🛡️保值' },
-            { district: '鼓山區', area: '美術館特區(新)', type: '新成屋/預售', priceRange: [1800, 4500], trend: '🔥飆漲' },
-            { district: '左營區', area: '高鐵特區', type: '中古大樓', priceRange: [1100, 1900], trend: '📈穩健' },
-            { district: '左營區', area: '果貿社區', type: '圓環大樓', priceRange: [550, 950], trend: '💰補漲' },
-            { district: '楠梓區', area: '高大特區', type: '新成屋', priceRange: [1000, 1600], trend: '🔥飆漲' },
-            { district: '橋頭區', area: '新市鎮', type: '新成屋', priceRange: [1100, 1700], trend: '🔥飆漲' },
-            { district: '仁武區', area: '八卦寮/澄德', type: '透天/大樓', priceRange: [1200, 1900], trend: '📈穩健' },
-            { district: '岡山區', area: '火車站周邊', type: '透天/大樓', priceRange: [900, 1500], trend: '📈穩健' },
-            { district: '前鎮區', area: '亞洲新灣區', type: '新成屋', priceRange: [1000, 1800], trend: '🔥飆漲' },
-            { district: '前鎮區', area: '瑞隆/五甲', type: '中古大樓', priceRange: [750, 1250], trend: '🛡️保值' },
-            { district: '苓雅區', area: '文化中心', type: '中古大樓', priceRange: [900, 1600], trend: '🛡️保值' },
-            { district: '苓雅區', area: '三多/85大樓', type: '套房/兩房', priceRange: [450, 850], trend: '💰低基期' },
-            { district: '前金區', area: '愛河周邊', type: '中古大樓', priceRange: [850, 1550], trend: '📈穩健' },
-            { district: '新興區', area: '六合/美麗島', type: '華廈', priceRange: [700, 1300], trend: '💰補漲' },
-            { district: '鹽埕區', area: '駁二特區', type: '中古大樓', priceRange: [650, 1100], trend: '📈穩健' },
-            { district: '小港區', area: '漢民商圈', type: '華廈/大樓', priceRange: [500, 950], trend: '💰低基期' },
-            { district: '鳳山區', area: '文山特區', type: '中古大樓', priceRange: [1200, 2000], trend: '🛡️保值' },
-            { district: '鳳山區', area: '鳳山國中/大寮', type: '華廈/新大樓', priceRange: [800, 1300], trend: '📈穩健' },
-            { district: '三民區', area: '河堤社區', type: '中古大樓', priceRange: [900, 1600], trend: '🛡️保值' },
-            { district: '三民區', area: '建工/高科大', type: '中古大樓', priceRange: [750, 1350], trend: '📈穩健' },
-            { district: '大寮區', area: '大發/市區', type: '透天/華廈', priceRange: [600, 1100], trend: '💰低基期' },
-            { district: '林園區', area: '沿海路周邊', type: '透天/華廈', priceRange: [450, 850], trend: '💰低基期' },
+            // 大樓
+            { district: '鼓山區', area: '美術館特區', type: '中古大樓', category: '大樓', priceRange: [1300, 2400], trend: '🛡️保值' },
+            { district: '鼓山區', area: '美術館特區(新)', type: '新成屋/預售', category: '大樓', priceRange: [1800, 4500], trend: '🔥飆漲' },
+            { district: '左營區', area: '高鐵特區', type: '中古大樓', category: '大樓', priceRange: [1100, 1900], trend: '📈穩健' },
+            { district: '左營區', area: '果貿社區', type: '圓環大樓', category: '大樓', priceRange: [550, 950], trend: '💰補漲' },
+            { district: '楠梓區', area: '高大特區', type: '新成屋', category: '大樓', priceRange: [1000, 1600], trend: '🔥飆漲' },
+            { district: '橋頭區', area: '新市鎮', type: '新成屋', category: '大樓', priceRange: [1100, 1700], trend: '🔥飆漲' },
+            { district: '前鎮區', area: '亞洲新灣區', type: '新成屋', category: '大樓', priceRange: [1000, 1800], trend: '🔥飆漲' },
+            { district: '苓雅區', area: '文化中心', type: '中古大樓', category: '大樓', priceRange: [900, 1600], trend: '🛡️保值' },
+            { district: '鳳山區', area: '文山特區', type: '中古大樓', category: '大樓', priceRange: [1200, 2000], trend: '🛡️保值' },
+            { district: '三民區', area: '河堤社區', type: '中古大樓', category: '大樓', priceRange: [900, 1600], trend: '🛡️保值' },
+            { district: '鹽埕區', area: '駁二特區', type: '中古大樓', category: '大樓', priceRange: [650, 1100], trend: '📈穩健' },
+            
+            // 透天
+            { district: '仁武區', area: '八卦寮/澄德', type: '透天別墅', category: '透天', priceRange: [1500, 2500], trend: '📈穩健' },
+            { district: '岡山區', area: '火車站周邊', type: '透天', category: '透天', priceRange: [1200, 1800], trend: '📈穩健' },
+            { district: '大寮區', area: '大發/市區', type: '透天', category: '透天', priceRange: [800, 1300], trend: '💰低基期' },
+            { district: '林園區', area: '沿海路周邊', type: '透天', category: '透天', priceRange: [600, 1000], trend: '💰低基期' },
+            { district: '楠梓區', area: '土庫重劃區', type: '透天', category: '透天', priceRange: [1300, 1900], trend: '📈穩健' },
+
+            // 華廈
+            { district: '新興區', area: '六合/美麗島', type: '華廈', category: '華廈', priceRange: [700, 1300], trend: '💰補漲' },
+            { district: '小港區', area: '漢民商圈', type: '華廈', category: '華廈', priceRange: [500, 950], trend: '💰低基期' },
+            { district: '鳳山區', area: '鳳山國中/大寮', type: '華廈', category: '華廈', priceRange: [600, 1100], trend: '📈穩健' },
+            { district: '大寮區', area: '輔英科大', type: '華廈', category: '華廈', priceRange: [450, 800], trend: '💰低基期' },
+
+            // 公寓
+            { district: '前鎮區', area: '瑞隆/五甲', type: '公寓', category: '公寓', priceRange: [400, 750], trend: '🛡️保值' },
+            { district: '三民區', area: '建工/高科大', type: '公寓', category: '公寓', priceRange: [400, 700], trend: '📈穩健' },
+            { district: '鹽埕區', area: '舊市區', type: '公寓', category: '公寓', priceRange: [350, 650], trend: '💰低基期' },
+            { district: '苓雅區', area: '三多/85大樓', type: '套房/兩房', category: '公寓', priceRange: [450, 850], trend: '💰低基期' },
+
+            // 店面
+            { district: '鼓山區', area: '美術館特區', type: '黃金店面', category: '店面', priceRange: [3000, 6000], trend: '🔥飆漲' },
+            { district: '左營區', area: '巨蛋商圈', type: '透天店面', category: '店面', priceRange: [4000, 8000], trend: '🔥飆漲' },
+            { district: '苓雅區', area: '三多商圈', type: '大樓店面', category: '店面', priceRange: [1500, 3500], trend: '🛡️保值' },
+            { district: '三民區', area: '熱河/吉林', type: '透天店面', category: '店面', priceRange: [2500, 4500], trend: '📈穩健' },
         ];
 
         // --- 主程式 App ---
@@ -93,6 +113,7 @@
             const [gracePeriod, setGracePeriod] = useState(0);
             const [isNewYouth, setIsNewYouth] = useState(false);
             const [showReport, setShowReport] = useState(false); 
+            const [propertyTypeFilter, setPropertyTypeFilter] = useState('全部'); // 物件類型過濾器
 
             const [results, setResults] = useState({
                 safe: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
@@ -166,6 +187,24 @@
                 }
             };
 
+            // 過濾器按鈕組件
+            const FilterTabs = () => {
+                const types = ['全部', '大樓', '透天', '華廈', '公寓', '店面'];
+                return (
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-4">
+                        {types.map(type => (
+                            <button 
+                                key={type}
+                                onClick={() => setPropertyTypeFilter(type)}
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-all ${propertyTypeFilter === type ? 'bg-slate-800 text-white shadow-lg scale-105' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                            >
+                                {type}
+                            </button>
+                        ))}
+                    </div>
+                );
+            };
+
             return (
                 <div className="max-w-md md:max-w-4xl mx-auto min-h-screen pb-20">
                     
@@ -176,7 +215,6 @@
                                 <span className="bg-blue-600 text-white p-1 rounded-lg"><Icons.Home size={18} /></span>
                                 Lung哥的高雄買房戰情室
                             </h2>
-                            {/* 手機版分享按鈕：移除 hidden */}
                             <div className="flex gap-2">
                                 <button onClick={handleShare} className="bg-slate-100 text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors">
                                     <Icons.Share2 size={20} />
@@ -250,39 +288,48 @@
                             </div>
                         </div>
 
-                        {/* 3. 視覺化地圖 */}
+                        {/* 3. 視覺化地圖 (物件類型過濾版) */}
                         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                                 <Icons.MapPin className="text-blue-500" /> 高雄房市戰略地圖
                             </h3>
-                            <p className="text-sm text-slate-500 mb-4">根據您的預算，系統已自動為各區標示顏色：</p>
                             
+                            {/* 過濾器按鈕 */}
+                            <FilterTabs />
+
                             <div className="flex gap-2 mb-4 text-xs font-bold">
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-emerald-500"></span> 輕鬆買</span>
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-400"></span> 需努力</span>
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-slate-200"></span> 預算不足</span>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                {MARKET_DATA_ALL_TIME_ANALYSIS.map((spot, idx) => {
-                                    const status = getAreaStatus(spot.priceRange);
-                                    let bgClass = "bg-slate-100 text-slate-400 border-transparent opacity-60"; 
-                                    if (status === 'safe') bgClass = "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 hover:shadow-md cursor-pointer";
-                                    if (status === 'risk') bgClass = "bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hover:shadow-md cursor-pointer";
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 fade-in">
+                                {MARKET_DATA_ALL_TIME_ANALYSIS
+                                    .filter(item => propertyTypeFilter === '全部' || item.category === propertyTypeFilter)
+                                    .map((spot, idx) => {
+                                        const status = getAreaStatus(spot.priceRange);
+                                        let bgClass = "bg-slate-100 text-slate-400 border-transparent opacity-60"; 
+                                        if (status === 'safe') bgClass = "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 hover:shadow-md cursor-pointer";
+                                        if (status === 'risk') bgClass = "bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hover:shadow-md cursor-pointer";
 
-                                    return (
-                                        <div key={idx} className={`p-3 rounded-xl border-2 transition-all ${bgClass} flex flex-col justify-between h-24`}>
-                                            <div className="flex justify-between items-start">
-                                                <span className="font-bold text-sm">{spot.district}</span>
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/50 backdrop-blur-sm">{spot.trend}</span>
+                                        return (
+                                            <div key={idx} className={`p-3 rounded-xl border-2 transition-all ${bgClass} flex flex-col justify-between h-24`}>
+                                                <div className="flex justify-between items-start">
+                                                    <span className="font-bold text-sm">{spot.district}</span>
+                                                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/50 backdrop-blur-sm">{spot.trend}</span>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs truncate font-medium">{spot.area}</div>
+                                                    <div className="text-xs font-bold mt-1">{spot.priceRange[0]}-{spot.priceRange[1]}萬</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div className="text-xs truncate font-medium">{spot.area}</div>
-                                                <div className="text-xs font-bold mt-1">{spot.priceRange[0]}-{spot.priceRange[1]}萬</div>
-                                            </div>
-                                        </div>
-                                    )
+                                        )
                                 })}
+                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(item => propertyTypeFilter === '全部' || item.category === propertyTypeFilter).length === 0 && (
+                                    <div className="col-span-2 md:col-span-4 text-center py-8 text-slate-400 text-sm">
+                                        此類型目前無推薦區域，請嘗試其他選項
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -309,7 +356,7 @@
                         </div>
                     </div>
 
-                    {/* Disclaimer - 這裡就是您要的資料來源與免責聲明 */}
+                    {/* Disclaimer - 這裡就是您要的資料來源與免責聲明 (電腦/手機皆顯示) */}
                     <div className="text-center mt-4 text-xs text-slate-400 pb-8 px-4">
                         <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
                     </div>
@@ -344,10 +391,16 @@
                                         <div className="text-left">
                                             <p className="text-xs text-slate-400 mb-2">系統推薦熱區</p>
                                             <div className="flex flex-wrap gap-2">
-                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').slice(0, 3).map((s, i) => (
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS
+                                                    .filter(s => getAreaStatus(s.priceRange) === 'safe')
+                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
+                                                    .slice(0, 3).map((s, i) => (
                                                     <span key={i} className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded">{s.area}</span>
                                                 ))}
-                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').length === 0 && <span className="text-xs text-slate-500">暫無匹配區域</span>}
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS
+                                                    .filter(s => getAreaStatus(s.priceRange) === 'safe')
+                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
+                                                    .length === 0 && <span className="text-xs text-slate-500">暫無匹配區域</span>}
                                             </div>
                                         </div>
                                     </div>
