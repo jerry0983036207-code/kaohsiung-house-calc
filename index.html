@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lung哥的高雄買房戰情室 | 終極版</title>
-    <!-- 引入 React, ReactDOM, Babel -->
+    <title>Lung哥的高雄買房戰情室 | V5.0 實戰版</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Google Fonts -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; -webkit-font-smoothing: antialiased; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        /* 隱藏滾動條但保留功能 */
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; -webkit-font-smoothing: antialiased; }
+        /* 自定義滑桿樣式 */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #2563eb; cursor: pointer; margin-top: -8px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #e2e8f0; border-radius: 2px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        /* 動畫 */
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -27,7 +25,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
         // ==========================================
         // 👇 設定區 (Lung哥專屬) 👇
@@ -42,7 +40,6 @@
         };
         // ==========================================
 
-        // --- Icons ---
         const Icons = {
             MapPin: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
             TrendingUp: ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
@@ -52,20 +49,17 @@
             Flame: ({className, size}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
             MessageCircle: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
             Share2: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>,
-            Download: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
             CheckCircle: ({size, className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
             X: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 12"/></svg>,
             Video: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
             Facebook: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
             Instagram: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>,
             Users: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-            Building: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>,
-            Store: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>
+            BarChart3: ({size}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
+            MoveHorizontal: ({size, className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 8 22 12 18 16"/><polyline points="6 8 2 12 6 16"/><line x1="2" x2="22" y1="12" y2="12"/></svg>
         };
 
-        // --- 資料庫 (擴充：加入 category 欄位) ---
         const MARKET_DATA_ALL_TIME_ANALYSIS = [
-            // 大樓
             { district: '鼓山區', area: '美術館特區', type: '中古大樓', category: '大樓', priceRange: [1300, 2400], trend: '🛡️保值' },
             { district: '鼓山區', area: '美術館特區(新)', type: '新成屋/預售', category: '大樓', priceRange: [1800, 4500], trend: '🔥飆漲' },
             { district: '左營區', area: '高鐵特區', type: '中古大樓', category: '大樓', priceRange: [1100, 1900], trend: '📈穩健' },
@@ -77,47 +71,40 @@
             { district: '鳳山區', area: '文山特區', type: '中古大樓', category: '大樓', priceRange: [1200, 2000], trend: '🛡️保值' },
             { district: '三民區', area: '河堤社區', type: '中古大樓', category: '大樓', priceRange: [900, 1600], trend: '🛡️保值' },
             { district: '鹽埕區', area: '駁二特區', type: '中古大樓', category: '大樓', priceRange: [650, 1100], trend: '📈穩健' },
-            
-            // 透天
             { district: '仁武區', area: '八卦寮/澄德', type: '透天別墅', category: '透天', priceRange: [1500, 2500], trend: '📈穩健' },
             { district: '岡山區', area: '火車站周邊', type: '透天', category: '透天', priceRange: [1200, 1800], trend: '📈穩健' },
             { district: '大寮區', area: '大發/市區', type: '透天', category: '透天', priceRange: [800, 1300], trend: '💰低基期' },
             { district: '林園區', area: '沿海路周邊', type: '透天', category: '透天', priceRange: [600, 1000], trend: '💰低基期' },
             { district: '楠梓區', area: '土庫重劃區', type: '透天', category: '透天', priceRange: [1300, 1900], trend: '📈穩健' },
-
-            // 華廈
             { district: '新興區', area: '六合/美麗島', type: '華廈', category: '華廈', priceRange: [700, 1300], trend: '💰補漲' },
             { district: '小港區', area: '漢民商圈', type: '華廈', category: '華廈', priceRange: [500, 950], trend: '💰低基期' },
             { district: '鳳山區', area: '鳳山國中/大寮', type: '華廈', category: '華廈', priceRange: [600, 1100], trend: '📈穩健' },
             { district: '大寮區', area: '輔英科大', type: '華廈', category: '華廈', priceRange: [450, 800], trend: '💰低基期' },
-
-            // 公寓
             { district: '前鎮區', area: '瑞隆/五甲', type: '公寓', category: '公寓', priceRange: [400, 750], trend: '🛡️保值' },
             { district: '三民區', area: '建工/高科大', type: '公寓', category: '公寓', priceRange: [400, 700], trend: '📈穩健' },
             { district: '鹽埕區', area: '舊市區', type: '公寓', category: '公寓', priceRange: [350, 650], trend: '💰低基期' },
             { district: '苓雅區', area: '三多/85大樓', type: '套房/兩房', category: '公寓', priceRange: [450, 850], trend: '💰低基期' },
-
-            // 店面
             { district: '鼓山區', area: '美術館特區', type: '黃金店面', category: '店面', priceRange: [3000, 6000], trend: '🔥飆漲' },
             { district: '左營區', area: '巨蛋商圈', type: '透天店面', category: '店面', priceRange: [4000, 8000], trend: '🔥飆漲' },
             { district: '苓雅區', area: '三多商圈', type: '大樓店面', category: '店面', priceRange: [1500, 3500], trend: '🛡️保值' },
             { district: '三民區', area: '熱河/吉林', type: '透天店面', category: '店面', priceRange: [2500, 4500], trend: '📈穩健' },
         ];
 
-        // --- 主程式 App ---
         const App = () => {
             const [monthlySalary, setMonthlySalary] = useState(60000);
             const [interestRate, setInterestRate] = useState(2.2);
             const [loanTermYears, setLoanTermYears] = useState(30);
             const [downPaymentRatio, setDownPaymentRatio] = useState(20);
             const [gracePeriod, setGracePeriod] = useState(0);
+            const [propertySize, setPropertySize] = useState(30); // 預設 30 坪
+            
             const [isNewYouth, setIsNewYouth] = useState(false);
             const [showReport, setShowReport] = useState(false); 
-            const [propertyTypeFilter, setPropertyTypeFilter] = useState('全部'); // 物件類型過濾器
+            const [propertyTypeFilter, setPropertyTypeFilter] = useState('全部');
 
             const [results, setResults] = useState({
-                safe: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
-                risk: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0 },
+                safe: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0, unitPrice: 0 },
+                risk: { monthlyPayment: 0, loanAmount: 0, totalHousePrice: 0, unitPrice: 0 },
                 gracePayment: 0,
             });
 
@@ -137,7 +124,7 @@
 
             useEffect(() => {
                 calculateAffordability();
-            }, [monthlySalary, interestRate, loanTermYears, downPaymentRatio, gracePeriod]);
+            }, [monthlySalary, interestRate, loanTermYears, downPaymentRatio, gracePeriod, propertySize]);
 
             const calculateAffordability = () => {
                 const safeMonthlyPayment = monthlySalary / 3;
@@ -154,11 +141,25 @@
                 const safeHousePrice = Math.floor(safeLoanAmount / loanRatio);
                 const riskHousePrice = Math.floor(riskLoanAmount / loanRatio);
 
+                // 計算單價 (總價 / 坪數)
+                const safeUnitPrice = propertySize > 0 ? Math.round(safeHousePrice / 10000 / propertySize * 10) / 10 : 0;
+                const riskUnitPrice = propertySize > 0 ? Math.round(riskHousePrice / 10000 / propertySize * 10) / 10 : 0;
+
                 const interestOnlyPayment = Math.round((safeLoanAmount * (interestRate/100)) / 12);
 
                 setResults({
-                    safe: { monthlyPayment: Math.round(safeMonthlyPayment), loanAmount: Math.round(safeLoanAmount / 10000), totalHousePrice: Math.round(safeHousePrice / 10000) },
-                    risk: { monthlyPayment: Math.round(riskMonthlyPayment), loanAmount: Math.round(riskLoanAmount / 10000), totalHousePrice: Math.round(riskHousePrice / 10000) },
+                    safe: { 
+                        monthlyPayment: Math.round(safeMonthlyPayment), 
+                        loanAmount: Math.round(safeLoanAmount / 10000), 
+                        totalHousePrice: Math.round(safeHousePrice / 10000),
+                        unitPrice: safeUnitPrice
+                    },
+                    risk: { 
+                        monthlyPayment: Math.round(riskMonthlyPayment), 
+                        loanAmount: Math.round(riskLoanAmount / 10000), 
+                        totalHousePrice: Math.round(riskHousePrice / 10000),
+                        unitPrice: riskUnitPrice
+                    },
                     gracePayment: interestOnlyPayment
                 });
             };
@@ -169,7 +170,6 @@
                 const [min, max] = priceRange;
                 const safeBudget = results.safe.totalHousePrice;
                 const riskBudget = results.risk.totalHousePrice;
-
                 if (safeBudget >= min) return 'safe'; 
                 if (riskBudget >= min) return 'risk'; 
                 return 'out'; 
@@ -179,7 +179,7 @@
                 if (navigator.share) {
                     navigator.share({
                         title: 'Lung哥的高雄買房戰情室',
-                        text: `我月薪${monthlySalary}，算出安全買房預算是${results.safe.totalHousePrice}萬！快來看看你在高雄能買哪？`,
+                        text: `我月薪${monthlySalary}，算出安全單價是${results.safe.unitPrice}萬/坪！快來測測你的？`,
                         url: window.location.href,
                     });
                 } else {
@@ -187,7 +187,6 @@
                 }
             };
 
-            // 過濾器按鈕組件
             const FilterTabs = () => {
                 const types = ['全部', '大樓', '透天', '華廈', '公寓', '店面'];
                 return (
@@ -207,8 +206,6 @@
 
             return (
                 <div className="max-w-md md:max-w-4xl mx-auto min-h-screen pb-20">
-                    
-                    {/* Header */}
                     <div className="bg-white p-6 rounded-b-3xl shadow-sm mb-6 sticky top-0 z-40 bg-opacity-90 backdrop-blur-md">
                         <div className="flex justify-between items-center mb-2">
                             <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
@@ -216,26 +213,57 @@
                                 Lung哥的高雄買房戰情室
                             </h2>
                             <div className="flex gap-2">
-                                <button onClick={handleShare} className="bg-slate-100 text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors">
-                                    <Icons.Share2 size={20} />
-                                </button>
-                                <button onClick={() => setShowReport(true)} className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1 font-bold shadow-lg hover:scale-105 transition-transform whitespace-nowrap">
-                                    <Icons.TrendingUp className="text-yellow-400" />
-                                    生成報告
-                                </button>
+                                <button onClick={handleShare} className="bg-slate-100 text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors"><Icons.Share2 size={20} /></button>
+                                <button onClick={() => setShowReport(true)} className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1 font-bold shadow-lg hover:scale-105 transition-transform whitespace-nowrap"><Icons.TrendingUp className="text-yellow-400" /> 生成報告</button>
                             </div>
                         </div>
                     </div>
 
                     <div className="px-4 md:px-6 space-y-6">
                         
-                        {/* 1. 輸入核心區 */}
+                        {/* 1. 輸入核心區 (含滑桿) */}
                         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <div className="mb-6">
-                                <label className="text-sm font-bold text-slate-500 mb-2 block">您的月收入 (TWD)</label>
-                                <div className="flex items-center bg-slate-50 rounded-2xl px-4 py-3 border-2 border-transparent focus-within:border-blue-500 transition-all">
-                                    <span className="text-2xl font-bold text-slate-400 mr-2">$</span>
-                                    <input type="number" value={monthlySalary} onChange={(e) => setMonthlySalary(Number(e.target.value))} className="block w-full text-3xl font-black text-slate-800 bg-transparent focus:outline-none placeholder-slate-300" placeholder="60000"/>
+                                <label className="text-sm font-bold text-slate-500 mb-2 flex justify-between">
+                                    <span>您的月收入 (TWD)</span>
+                                    <span className="text-blue-600">${formatNumber(monthlySalary)}</span>
+                                </label>
+                                <div className="flex items-center gap-4">
+                                    <input 
+                                        type="range" 
+                                        min="30000" 
+                                        max="200000" 
+                                        step="1000" 
+                                        value={monthlySalary} 
+                                        onChange={(e) => setMonthlySalary(Number(e.target.value))} 
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="mt-2 flex items-center bg-slate-50 rounded-xl px-4 py-2 border-2 border-transparent focus-within:border-blue-500">
+                                    <span className="text-xl font-bold text-slate-400 mr-2">$</span>
+                                    <input type="number" value={monthlySalary} onChange={(e) => setMonthlySalary(Number(e.target.value))} className="block w-full text-xl font-bold text-slate-800 bg-transparent focus:outline-none"/>
+                                </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="text-sm font-bold text-slate-500 mb-2 flex justify-between">
+                                    <span>預計購買坪數 (坪)</span>
+                                    <span className="text-emerald-600">{propertySize} 坪</span>
+                                </label>
+                                <input 
+                                    type="range" 
+                                    min="10" 
+                                    max="100" 
+                                    step="1" 
+                                    value={propertySize} 
+                                    onChange={(e) => setPropertySize(Number(e.target.value))} 
+                                    className="w-full mb-2"
+                                />
+                                <div className="flex justify-between text-xs text-slate-400">
+                                    <span>小套房(10)</span>
+                                    <span>兩房(25)</span>
+                                    <span>三房(35)</span>
+                                    <span>透天(60+)</span>
                                 </div>
                             </div>
 
@@ -244,7 +272,7 @@
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isNewYouth ? 'bg-blue-600 border-blue-600' : 'border-slate-400'}`}>
                                         {isNewYouth && <Icons.CheckCircle size={14} className="text-white"/>}
                                     </div>
-                                    <span className="text-sm font-bold text-blue-800">一鍵套用「新青安房貸」</span>
+                                    <span className="text-sm font-bold text-blue-800">一鍵套用「新青安」</span>
                                 </div>
                                 <span className="text-xs text-blue-600 bg-white px-2 py-1 rounded">40年/5年寬限</span>
                             </div>
@@ -257,7 +285,7 @@
                             </div>
                         </div>
 
-                        {/* 2. 結果儀表板 */}
+                        {/* 2. 結果儀表板 (新增單價顯示) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-emerald-500 text-white p-6 rounded-3xl relative overflow-hidden shadow-lg shadow-emerald-200">
                                 <div className="absolute -right-4 -top-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
@@ -266,8 +294,11 @@
                                     <span className="bg-white/20 text-xs px-2 py-1 rounded-lg backdrop-blur-sm">推薦</span>
                                 </div>
                                 <div className="mb-2">
-                                    <p className="text-sm opacity-80">建議總價天花板</p>
-                                    <p className="text-4xl font-black">{formatNumber(results.safe.totalHousePrice)} <span className="text-xl">萬</span></p>
+                                    <p className="text-sm opacity-80">總價天花板 / 目標單價</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-4xl font-black">{formatNumber(results.safe.totalHousePrice)} <span className="text-xl">萬</span></p>
+                                        <p className="text-lg opacity-90 font-bold">({results.safe.unitPrice}萬/坪)</p>
+                                    </div>
                                 </div>
                                 <div className="text-xs bg-black/10 inline-block px-3 py-1 rounded-full">
                                     月付 {formatNumber(results.safe.monthlyPayment)} 元 {gracePeriod > 0 && `(寬限期 ${formatNumber(results.gracePayment)})`}
@@ -279,8 +310,11 @@
                                     <div><h3 className="text-lg font-bold text-rose-600 flex items-center gap-1"><Icons.Flame size={18}/> 壓力鍋 (極限)</h3></div>
                                 </div>
                                 <div className="mb-2">
-                                    <p className="text-sm text-slate-400">緊繃總價天花板</p>
-                                    <p className="text-4xl font-black text-slate-800">{formatNumber(results.risk.totalHousePrice)} <span className="text-xl">萬</span></p>
+                                    <p className="text-sm text-slate-400">緊繃天花板 / 極限單價</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-4xl font-black text-slate-800">{formatNumber(results.risk.totalHousePrice)} <span className="text-xl">萬</span></p>
+                                        <p className="text-lg text-rose-500 font-bold">({results.risk.unitPrice}萬/坪)</p>
+                                    </div>
                                 </div>
                                 <div className="text-xs text-rose-500 bg-rose-50 inline-block px-3 py-1 rounded-full">
                                     月付 {formatNumber(results.risk.monthlyPayment)} 元 (佔薪水60%)
@@ -288,21 +322,17 @@
                             </div>
                         </div>
 
-                        {/* 3. 視覺化地圖 (物件類型過濾版) */}
+                        {/* 3. 視覺化地圖 */}
                         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                             <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                                 <Icons.MapPin className="text-blue-500" /> 高雄房市戰略地圖
                             </h3>
-                            
-                            {/* 過濾器按鈕 */}
                             <FilterTabs />
-
                             <div className="flex gap-2 mb-4 text-xs font-bold">
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-emerald-500"></span> 輕鬆買</span>
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-yellow-400"></span> 需努力</span>
                                 <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-slate-200"></span> 預算不足</span>
                             </div>
-
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 fade-in">
                                 {MARKET_DATA_ALL_TIME_ANALYSIS
                                     .filter(item => propertyTypeFilter === '全部' || item.category === propertyTypeFilter)
@@ -311,7 +341,6 @@
                                         let bgClass = "bg-slate-100 text-slate-400 border-transparent opacity-60"; 
                                         if (status === 'safe') bgClass = "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100 hover:shadow-md cursor-pointer";
                                         if (status === 'risk') bgClass = "bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100 hover:shadow-md cursor-pointer";
-
                                         return (
                                             <div key={idx} className={`p-3 rounded-xl border-2 transition-all ${bgClass} flex flex-col justify-between h-24`}>
                                                 <div className="flex justify-between items-start">
@@ -325,11 +354,7 @@
                                             </div>
                                         )
                                 })}
-                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(item => propertyTypeFilter === '全部' || item.category === propertyTypeFilter).length === 0 && (
-                                    <div className="col-span-2 md:col-span-4 text-center py-8 text-slate-400 text-sm">
-                                        此類型目前無推薦區域，請嘗試其他選項
-                                    </div>
-                                )}
+                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(item => propertyTypeFilter === '全部' || item.category === propertyTypeFilter).length === 0 && <div className="col-span-2 md:col-span-4 text-center py-8 text-slate-400 text-sm">此類型目前無推薦區域，請嘗試其他選項</div>}
                             </div>
                         </div>
 
@@ -344,7 +369,6 @@
                                 <button onClick={() => window.open(LINE_ADD_FRIEND_URL, '_blank')} className="bg-[#06c755] hover:bg-[#05b64d] text-white font-bold py-3 px-8 rounded-full flex items-center gap-2 shadow-lg shadow-green-900/20 transform transition hover:scale-105 active:scale-95">
                                     <Icons.MessageCircle size={20} /> 加 Lung哥 Line 諮詢
                                 </button>
-
                                 <div className="flex flex-wrap justify-center gap-4 mt-8 pt-8 border-t border-slate-700 w-full">
                                     <a href={SOCIAL_LINKS.tiktok} target="_blank" className="p-2 bg-slate-700 rounded-full hover:bg-black transition-colors"><Icons.Video size={18}/></a>
                                     <a href={SOCIAL_LINKS.fb} target="_blank" className="p-2 bg-slate-700 rounded-full hover:bg-[#1877F2] transition-colors"><Icons.Facebook size={18}/></a>
@@ -356,7 +380,7 @@
                         </div>
                     </div>
 
-                    {/* Disclaimer - 這裡就是您要的資料來源與免責聲明 (電腦/手機皆顯示) */}
+                    {/* Disclaimer (全平台顯示) */}
                     <div className="text-center mt-4 text-xs text-slate-400 pb-8 px-4">
                         <p>資料來源：內政部實價登錄 (歷年資料大數據分析 - 2025/11/29 現況更新) | 房貸試算僅供參考，實際核貸依銀行為準</p>
                     </div>
@@ -366,7 +390,6 @@
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowReport(false)}>
                             <div className="bg-slate-900 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl relative" onClick={e => e.stopPropagation()}>
                                 <button onClick={() => setShowReport(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white z-20"><Icons.X size={24}/></button>
-                                
                                 <div className="p-8 text-center text-white bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
                                     <div className="flex flex-col items-center mb-6">
                                         <div className="w-16 h-16 rounded-full border-2 border-emerald-400 p-0.5 mb-3">
@@ -375,7 +398,6 @@
                                         <h3 className="text-xl font-black">Lung哥買房戰情室</h3>
                                         <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Analysis Report</p>
                                     </div>
-
                                     <div className="bg-white/10 rounded-2xl p-4 mb-6 backdrop-blur-md border border-white/10">
                                         <div className="grid grid-cols-2 gap-4 mb-4 text-left">
                                             <div>
@@ -387,24 +409,27 @@
                                                 <p className="text-xl font-bold text-emerald-400">${formatNumber(results.safe.totalHousePrice)}萬</p>
                                             </div>
                                         </div>
+                                        <div className="flex justify-between items-end mb-4">
+                                            <div>
+                                                <p className="text-xs text-slate-400">建議單價</p>
+                                                <p className="text-lg font-bold text-emerald-300">{results.safe.unitPrice} <span className="text-xs text-white">萬/坪</span></p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs text-slate-400">試算坪數</p>
+                                                <p className="text-sm font-bold">{propertySize} 坪</p>
+                                            </div>
+                                        </div>
                                         <div className="h-px bg-white/10 mb-4"></div>
                                         <div className="text-left">
                                             <p className="text-xs text-slate-400 mb-2">系統推薦熱區</p>
                                             <div className="flex flex-wrap gap-2">
-                                                {MARKET_DATA_ALL_TIME_ANALYSIS
-                                                    .filter(s => getAreaStatus(s.priceRange) === 'safe')
-                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
-                                                    .slice(0, 3).map((s, i) => (
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').slice(0, 3).map((s, i) => (
                                                     <span key={i} className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded">{s.area}</span>
                                                 ))}
-                                                {MARKET_DATA_ALL_TIME_ANALYSIS
-                                                    .filter(s => getAreaStatus(s.priceRange) === 'safe')
-                                                    .filter(s => propertyTypeFilter === '全部' || s.category === propertyTypeFilter)
-                                                    .length === 0 && <span className="text-xs text-slate-500">暫無匹配區域</span>}
+                                                {MARKET_DATA_ALL_TIME_ANALYSIS.filter(s => getAreaStatus(s.priceRange) === 'safe').length === 0 && <span className="text-xs text-slate-500">暫無匹配區域</span>}
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="flex items-center justify-center gap-4">
                                         <div className="bg-white p-1 rounded-lg">
                                             <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${LINE_ADD_FRIEND_URL}`} className="w-16 h-16" />
@@ -415,7 +440,6 @@
                                             <p className="text-xs text-slate-500 mt-1">ID: Lung哥</p>
                                         </div>
                                     </div>
-                                    
                                     <p className="text-[10px] text-slate-600 mt-6">資料來源：內政部實價登錄 | 房貸試算僅供參考，實際核貸依銀行為準</p>
                                 </div>
                             </div>
