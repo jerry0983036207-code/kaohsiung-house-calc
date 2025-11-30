@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lung哥的高雄買房戰情室 | V5.3 全面同步版</title>
+    <title>Lung哥的高雄買房戰情室 | V5.4 坪數優化版</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -269,10 +269,12 @@
                                     onChange={(e) => setPropertySize(Number(e.target.value))} 
                                     className="w-full mb-2"
                                 />
+                                {/* 修改後的刻度標籤 */}
                                 <div className="flex justify-between text-xs text-slate-400">
-                                    <span>小套房(10)</span>
-                                    <span>兩房(25)</span>
-                                    <span>三房(35)</span>
+                                    <span>套房(10)</span>
+                                    <span>兩房(15)</span>
+                                    <span>三房(25)</span>
+                                    <span>四房(35)</span>
                                     <span>透天(60+)</span>
                                 </div>
                             </div>
